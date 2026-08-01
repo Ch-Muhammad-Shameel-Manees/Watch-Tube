@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import Container from './Container'
-import "@testing-library/jest-dom/vitest";
+import { Container } from '../../src/components/ui';
 import { describe, expect, it } from 'vitest';
 
 describe("Container", () => {

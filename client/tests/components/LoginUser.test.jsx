@@ -1,15 +1,15 @@
 import { getByLabelText, render, screen } from '@testing-library/react'
-import LoginUser from './LoginUser'
+import {LoginUser} from '../../src/components/User'
 import { configureStore } from '@reduxjs/toolkit'
-import authReducer from '../../store/authSlice'
+import authReducer from '../../src/store/authSlice'
 import { Provider } from 'react-redux'
 import { describe, expect, it, test, vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-vi.mock(import("../../services/userService"),  () => ({
+vi.mock(import("../../src/services/userService"),  () => ({
           loginUser: vi.fn()
         }))
 
-import { loginUser } from '../../services/userService'
+import { loginUser } from '../../src/services/userService'
 import userEvent  from '@testing-library/user-event'
 
 const queryClient = new QueryClient();
