@@ -4,13 +4,10 @@ import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { getVideo } from '../../services/videoService';
 import { deleteComment as deleteCommentService } from '../../services/commentSevice';
-import { toggleVideoLike, toggleCommentLike } from '../../services/likeService';
 import { toggleSubscription } from '../../services/subscriptionService';
 import { Button } from '../ui';
 import GetAllVideos from './GetAllVideos';
 import CreateComment from './CreateComment';
-//For thumbs-up icon
-import { FiThumbsUp } from "react-icons/fi";
 
 function PlayVideo() {
   const { videoId } = useParams();
@@ -22,7 +19,6 @@ function PlayVideo() {
   const [subscribeResponse, setSubscribeResponse] = useState(null);
   const [replyingToId, setReplyingToId] = useState(null);
   const [deleteError, setDeleteError] = useState('');
-  const [commentLikeStates, setCommentLikeStates] = useState({});
 
   const { data: videoResponse, isPending, error, refetch: refetchVideo } = useQuery({
     queryKey: ['getVideo', videoId],
@@ -44,55 +40,12 @@ function PlayVideo() {
     }
   });
 
-  const videoLikeMutation = useMutation({
-    mutationFn: () => toggleVideoLike(videoId),
-    onSuccess: (response) => {
-      const nextLiked = Boolean(response?.data?.isLiked);
-      setVideo((prev) => prev ? {
-        ...prev,
-        isLiked: nextLiked,
-        likesCount: Math.max(0, (prev.likesCount || 0) + (nextLiked ? 1 : -1))
-      } : prev);
-    }
-  });
-
-  const commentLikeMutation = useMutation({
-    mutationFn: (commentId) => toggleCommentLike(commentId),
-    onSuccess: (response, commentId) => {
-      const nextLiked = Boolean(response?.data?.isLiked);
-      setCommentLikeStates((prev) => ({ ...prev, [commentId]: nextLiked }));
-      setComments((prev) => prev.map((comment) => comment._id?.toString() === commentId?.toString() ? { ...comment, isLiked: nextLiked } : comment));
-    }
-  });
-
   useEffect(() => {
     const payload = videoResponse?.data;
-    const normalizedVideo = payload || null;
-    const initialLiked = Boolean(
-      normalizedVideo?.isLiked ??
-      normalizedVideo?.likedBy?.some((likeOwner) => likeOwner?.toString() === currentUser?._id?.toString()) ??
-      false
-    );
-
-    setVideo(normalizedVideo ? { ...normalizedVideo, isLiked: initialLiked } : null);
-    setComments(Array.isArray(normalizedVideo?.comments) ? normalizedVideo.comments : []);
-    setIsSubscribed(Boolean(normalizedVideo?.isSubscribed || normalizedVideo?.owner?.isSubscribed || normalizedVideo?.ownerDetails?.[0]?.isSubscribed || false));
-  }, [videoResponse, currentUser?._id]);
-
-  useEffect(() => {
-    setCommentLikeStates((prev) => {
-      const next = { ...prev };
-      comments.forEach((comment) => {
-        if (!comment?._id || Object.prototype.hasOwnProperty.call(next, comment._id)) return;
-        next[comment._id] = Boolean(
-          comment?.isLiked ??
-          comment?.likedBy?.some((likeOwner) => likeOwner?.toString() === currentUser?._id?.toString()) ??
-          false
-        );
-      });
-      return next;
-    });
-  }, [comments, currentUser?._id]);
+    setVideo(payload || null);
+    setComments(Array.isArray(payload?.comments) ? payload.comments : []);
+    setIsSubscribed(Boolean(payload?.isSubscribed || payload?.owner?.isSubscribed || payload?.ownerDetails?.[0]?.isSubscribed || false));
+  }, [videoResponse]);
 
   useEffect(() => {
     if (!subscribeResponse) return;
@@ -120,16 +73,6 @@ function PlayVideo() {
     return Boolean(ownerId && currentUser?._id && ownerId.toString() === currentUser._id.toString());
   };
 
-  const handleVideoLikeToggle = () => {
-    if (!currentUser || !videoId || videoLikeMutation.isPending) return;
-    videoLikeMutation.mutate();
-  };
-
-  const handleCommentLikeToggle = (commentId) => {
-    if (!currentUser || !commentId || commentLikeMutation.isPending) return;
-    commentLikeMutation.mutate(commentId);
-  };
-
   const handleCommentAdded = async (response) => {
     const createdComment = response?.data || response;
     if (!createdComment?._id) {
@@ -144,7 +87,6 @@ function PlayVideo() {
 
   const renderComment = (commentItem, depth = 0) => {
     const replies = comments.filter((item) => item.parentComment?.toString() === commentItem._id?.toString());
-    const isCommentLiked = Boolean(commentLikeStates[commentItem._id] ?? false);
 
     return (
       <div key={commentItem._id} className={`mb-4 border-b pb-3 last:border-b-0 ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'} ${depth ? 'ml-6' : ''}`}>
@@ -168,16 +110,6 @@ function PlayVideo() {
             </p>
 
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <Button
-                type="button"
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors ${isCommentLiked ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
-                onClick={() => handleCommentLikeToggle(commentItem._id)}
-                disabled={!currentUser || commentLikeMutation.isPending}
-              >
-                <span className="text-sm"><FiThumbsUp /></span>
-                <span>{isCommentLiked ? 'Liked' : 'Like'}</span>
-              </Button>
-
               <button
                 type="button"
                 className={`text-sm ${theme === 'dark' ? 'text-red-400 hover:text-red-300' : 'text-red-500 hover:text-red-600'}`}
@@ -223,15 +155,15 @@ function PlayVideo() {
   };
 
   if (isPending) {
-    return <div className={`min-h-screen px-6 py-10 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>Loading video...</div>;
+    return <div className={`min-h-screen px-6 py-10 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>Loading video...</div>;
   }
 
   if (error) {
-    return <div className={`min-h-screen px-6 py-10 ${theme === 'dark' ? 'bg-gray-950 text-red-400' : 'bg-gray-200 text-red-600'}`}>Error loading video:{error?.response?.data?.message}</div>;
+    return <div className={`min-h-screen px-6 py-10 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-red-400' : 'bg-gray-200 text-red-600'}`}>Error loading video:{error?.response?.data?.message}</div>;
   }
 
   return (
-    <div className={`min-h-screen overflow-x-hidden ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
+    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 xl:flex-row">
         <div className="flex-1 min-w-0">
           <div className={`w-full overflow-hidden rounded-2xl shadow-2xl ${theme === 'dark' ? 'bg-black' : 'bg-gray-300'}`}>
@@ -272,19 +204,8 @@ function PlayVideo() {
               <div className="flex items-center gap-3">
                 <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{video?.views || 0} views</span>
                 <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{video?.likesCount || 0} likes</span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    onClick={handleVideoLikeToggle}
-                    disabled={!currentUser || videoLikeMutation.isPending}
-                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${Boolean(video?.isLiked) ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
-                  >
-                    <span className="text-base"><FiThumbsUp /></span>
-                    <span>{Boolean(video?.isLiked) ? 'Liked' : 'Like'}</span>
-                  </Button>
-                </div>
                 <Button
-                  className={`rounded-full px-4 py-2 ${isSubscribed ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
+                  className={`rounded-full px-4 py-2 ${isSubscribed ? (theme === 'dark' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-200 text-gray-950 font-medium')}`}
                   onClick={toggleChannelSubscription}
                   disabled={!currentUser}
                 >
