@@ -10,7 +10,7 @@ import { Container } from '../ui/index.js';
 
 function RegisterUser() {
 
-const { register, handleSubmit } = useForm();
+const { register, handleSubmit, formState: { errors } } = useForm();
 
 const navigate = useNavigate();
 const dispatch = useDispatch();
@@ -68,56 +68,73 @@ if (registerMutation.error) {
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 py-4 transition-colors duration-300 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-gray-950' : 'bg-gray-200'}`}>
-        <Container>
             <form onSubmit={handleSubmit(onSubmit)} className={`mx-auto w-full max-w-2xl rounded-2xl border p-5 shadow-xl sm:p-6 lg:p-8 ${theme === 'dark' ? 'border-gray-800 bg-gray-900/90 shadow-black/30' : 'border-gray-300 bg-white shadow-gray-200'}`}>
                 <div className={`mb-6 border-b pb-4 ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'}`}>
                     <h2 className={`text-3xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-950'}`}>Create an account</h2>
                     <p className={`mt-2 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Join the platform and start sharing your videos.</p>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-3">
+                    <div>
                     <Input
                         label="Username"
                         className={`rounded-xl border px-4 py-3 outline-none transition focus:border-red-500 ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white' : 'border-gray-300 bg-gray-100 text-gray-950'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                        {...register("username", { required: "Username is required" })}
-                    />
+                        {...register("username", { required: "Username is required!" })}
+                        />
+                    <p>{errors.username?.message}</p>
+                    </div>
+                    <div>
                     <Input
                         label="Email"
                         type="email"
                         className={`rounded-xl border px-4 py-3 outline-none transition focus:border-red-500 ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white' : 'border-gray-300 bg-gray-100 text-gray-950'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                        {...register("email", { required: "Email is required" })}
+                        {...register("email", { required: "Email is required!" })}
                     />
+                    <p>{errors.email?.message}</p>
+                    </div>
+                    <div>
                     <Input
                         label="Full Name"
                         type="text"
                         className={`rounded-xl border px-4 py-3 outline-none transition focus:border-red-500 ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white' : 'border-gray-300 bg-gray-100 text-gray-950'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                        {...register("fullName", { required: "Full Name is required" })}
-                    />
+                        {...register("fullName", { required: "Full Name is required!" })}
+                        />
+                    <p>{errors.fullName?.message}</p>
+                    </div>
+                    <div>
                     <Input
                         label="Password"
                         type="password"
                         className={`rounded-xl border px-4 py-3 outline-none transition focus:border-red-500 ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white' : 'border-gray-300 bg-gray-100 text-gray-950'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                        {...register("password", { required: "Password is required" })}
-                    />
+                        {...register("password", { required: "Password is required!" })}
+                        />
+                    <p>{errors.password?.message}</p>
+                    </div>
                 </div>
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="mt-4 flex flex-col gap-3">
+                    <div>
+
                     <Input
                         label="Avatar"
                         type="file"
                         className={`rounded-xl border px-3 py-3 file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white file:bg-gray-700 file:text-gray-100' : 'border-gray-300 bg-gray-100 text-gray-950 file:bg-gray-300 file:text-gray-800'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
-                        {...register("avatar", { required: "Avatar is required" })}
-                    />
+                        {...register("avatar", { required: "Avatar is required!" })}
+                        />
+                    <p>{errors.avatar?.message}</p>
+                    </div>
+                    <div>
                     <Input
                         label="Cover Image"
                         type="file"
                         className={`rounded-xl border px-3 py-3 file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold ${theme === 'dark' ? 'border-gray-700 bg-gray-800/80 text-white file:bg-gray-700 file:text-gray-100' : 'border-gray-300 bg-gray-100 text-gray-950 file:bg-gray-300 file:text-gray-800'}`}
                         labelClassName={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                         {...register("coverImage")}
-                    />
+                        />
+                    </div>
                 </div>
                 <Button
                     type='submit'
@@ -127,7 +144,6 @@ if (registerMutation.error) {
                     {registerMutation.isPending ? "Registering..." : "Register"}
                 </Button>
             </form>
-        </Container>
     </div>
   )
 }

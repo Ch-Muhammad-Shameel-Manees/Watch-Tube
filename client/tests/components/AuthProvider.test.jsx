@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from "vitest";
 import { getCurrentUser } from "../../src/services/userService";
 import { data, MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
 
 vi.mock("../../src/services/userService", () => ({
     getCurrentUser: vi.fn()
@@ -59,7 +58,7 @@ describe("Auth Provider", () => {
             <Provider store={store}>
                 <MemoryRouter>
                     <AuthProvider>
-                        <h1>Logged in!</h1>
+                        <h1>Logged in</h1>
                     </AuthProvider>
                 </MemoryRouter>
             </Provider>
