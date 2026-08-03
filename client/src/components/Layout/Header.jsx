@@ -73,7 +73,7 @@ function Header(){
                                 onClick={() => dispatch(toggleTheme())}
                                 className={`rounded-full cursor-pointer border px-3 py-2 text-sm font-medium transition ${theme === 'dark' ? 'border-gray-700 bg-gray-800 text-gray-200 hover:bg-gray-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'}`}
                             >
-                                Switch Theme: {theme === 'dark' ? 'Light' : 'Dark'}
+                                Switch Theme to {theme === 'dark' ? 'Light' : 'Dark'}
                             </button>
                             <Button
                             className={`rounded-3xl px-4 transition-colors ${theme === 'dark' ? 'bg-gray-800 text-gray-200 hover:bg-gray-700' : 'bg-white text-gray-950 hover:bg-gray-100'}`}

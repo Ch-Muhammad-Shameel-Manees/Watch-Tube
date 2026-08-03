@@ -20,7 +20,7 @@ function App() {
     }, [theme]);
 
     return (
-        <div className={`transition-colors h-full duration-300 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
+        <div className={`${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
             <Outlet />
         </div>
     )

@@ -168,15 +168,15 @@ function PlayVideo() {
             </p>
 
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <button
+              <Button
                 type="button"
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors ${isCommentLiked ? (theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700') : (theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-950')}`}
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors ${isCommentLiked ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
                 onClick={() => handleCommentLikeToggle(commentItem._id)}
                 disabled={!currentUser || commentLikeMutation.isPending}
               >
                 <span className="text-sm"><FiThumbsUp /></span>
                 <span>{isCommentLiked ? 'Liked' : 'Like'}</span>
-              </button>
+              </Button>
 
               <button
                 type="button"
@@ -223,15 +223,15 @@ function PlayVideo() {
   };
 
   if (isPending) {
-    return <div className={`min-h-screen px-6 py-10 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>Loading video...</div>;
+    return <div className={`min-h-screen px-6 py-10 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>Loading video...</div>;
   }
 
   if (error) {
-    return <div className={`min-h-screen px-6 py-10 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-red-400' : 'bg-gray-200 text-red-600'}`}>Error loading video:{error?.response?.data?.message}</div>;
+    return <div className={`min-h-screen px-6 py-10 ${theme === 'dark' ? 'bg-gray-950 text-red-400' : 'bg-gray-200 text-red-600'}`}>Error loading video:{error?.response?.data?.message}</div>;
   }
 
   return (
-    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
+    <div className={`min-h-screen overflow-x-hidden ${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 xl:flex-row">
         <div className="flex-1 min-w-0">
           <div className={`w-full overflow-hidden rounded-2xl shadow-2xl ${theme === 'dark' ? 'bg-black' : 'bg-gray-300'}`}>
@@ -277,14 +277,14 @@ function PlayVideo() {
                     type="button"
                     onClick={handleVideoLikeToggle}
                     disabled={!currentUser || videoLikeMutation.isPending}
-                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${Boolean(video?.isLiked) ? (theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700') : (theme === 'dark' ? 'bg-gray-800 text-gray-200 hover:bg-gray-700' : 'bg-gray-200 text-gray-950 hover:bg-gray-300')}`}
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${Boolean(video?.isLiked) ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
                   >
                     <span className="text-base"><FiThumbsUp /></span>
                     <span>{Boolean(video?.isLiked) ? 'Liked' : 'Like'}</span>
                   </Button>
                 </div>
                 <Button
-                  className={`rounded-full px-4 py-2 ${isSubscribed ? (theme === 'dark' ? 'bg-gray-600 text-white' : 'bg-gray-700 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-200 text-gray-950 font-medium')}`}
+                  className={`rounded-full px-4 py-2 ${isSubscribed ? (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white') : (theme === 'dark' ? 'bg-white text-gray-950' : 'bg-gray-950 text-white font-medium')}`}
                   onClick={toggleChannelSubscription}
                   disabled={!currentUser}
                 >
