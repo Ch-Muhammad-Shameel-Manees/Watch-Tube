@@ -3,14 +3,15 @@ import {LoginUser} from '../../src/components/User'
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../../src/store/authSlice'
 import { Provider } from 'react-redux'
-import { describe, expect, it, test, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 vi.mock(import("../../src/services/userService"),  () => ({
           loginUser: vi.fn()
         }))
 
-import { loginUser } from '../../src/services/userService'
-import userEvent  from '@testing-library/user-event'
+import { loginUser } from '../../src/services/userService';
+import userEvent  from '@testing-library/user-event';
+import "@testing-library/jest-dom/vitest"
 
 const queryClient = new QueryClient();
 
@@ -18,14 +19,6 @@ const store = configureStore({
     reducer: {
         auth: authReducer
     },
-    preloadedState: {
-        auth: {
-            authStatus: false,
-            user:{
-                username: "Shameel"
-            }
-        }
-    }
 })
 
 function renderLogin() {
@@ -51,13 +44,13 @@ describe("Login User", () => {
 
         vi.mocked(loginUser).mockResolvedValue({
             data:{
-                username: "Ateeq"
+                username: "Shameel"
             }
         })
         
         const user = userEvent.setup();
 
-        render(renderLogin())
+        render(renderLogin());
 
         const usernameInput = screen.getByPlaceholderText(/username/i, {exact: false});
         await user.type(usernameInput,"shameel12");

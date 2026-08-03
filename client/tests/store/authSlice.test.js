@@ -21,20 +21,6 @@ describe("Auth Reducer", () => {
         expect(auth.user).toMatchObject({username: "Shameel", age: 15})
 
         expect(auth.authStatus).toBeTruthy();
-    }),
-    it("should return the selected user in the state", () => {
-        const state = {
-            auth: {
-                user: {
-                    name: "Shameel"
-                }
-            }
-        }
-
-        const user = selectUser(state);
-
-        expect(user).toEqual({name: "Shameel"})
     })
-
     
 })
