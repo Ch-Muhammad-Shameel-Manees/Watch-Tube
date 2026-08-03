@@ -13,7 +13,7 @@ function LoginUser() {
 const dispatch = useDispatch();
 
 const { register, handleSubmit } = useForm();
-// const navigate = useNavigate();
+const navigate = useNavigate();
 
 const user = useSelector(state => state.auth.user);
 
@@ -35,7 +35,7 @@ const onSubmit = async (data) => {
                     password: user.password }, {
                     onSuccess: (loginResponse) => {
                         dispatch(login(loginResponse.data));
-                        // navigate("/");
+                        navigate("/");
                     },
                     
                     onError: (error) => {
@@ -52,14 +52,6 @@ if (loginMutation.isPending) {
             Logging in user...
         </div>
     );
-}
-
-if (loginMutation.isSuccess) {
-    return (
-        <h1>You have successfully logged in!
-            <p>The user is: {user?.username}</p>
-        </h1>   
-    )
 }
 
 // if (authStatus) {
@@ -109,7 +101,6 @@ if (loginMutation.isSuccess) {
                 >
                     Login
                 </Button>
-                <div>The user is: {user?.username}</div>
                 {loginMutation.error && (
                     <div className="text-sm text-red-500">
                         {loginMutation.error.response?.data?.message}

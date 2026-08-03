@@ -4,7 +4,7 @@ const Button = ({ onClick, type = "button", className, disabled = false, childre
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`cursor-pointer ${className} ${disabled ? "bg-gray-400 cursor-wait text-black" : "bg-gray-900 text-gray-200"}`}
+            className={`${className} ${disabled ? "bg-gray-400 cursor-not-allowed text-black" : "bg-gray-900 cursor-pointer text-gray-200"}`}
             {...props}
         >
             {children}
