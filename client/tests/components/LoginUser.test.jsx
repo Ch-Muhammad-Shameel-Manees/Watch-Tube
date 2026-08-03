@@ -1,9 +1,9 @@
 import { getByLabelText, render, screen } from '@testing-library/react'
-import {LoginUser} from '../../src/components/User'
-import { configureStore } from '@reduxjs/toolkit'
-import authReducer from '../../src/store/authSlice'
+import { LoginUser } from '../../src/components/User'
+import createTestStore  from '../store/testStore.js';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 vi.mock(import("../../src/services/userService"),  () => ({
           loginUser: vi.fn()
@@ -11,33 +11,53 @@ vi.mock(import("../../src/services/userService"),  () => ({
 
 import { loginUser } from '../../src/services/userService';
 import userEvent  from '@testing-library/user-event';
-import "@testing-library/jest-dom/vitest"
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from '@testing-library/react';
 
-const queryClient = new QueryClient();
-
-const store = configureStore({
-    reducer: {
-        auth: authReducer
-    },
+afterEach(() => {
+    cleanup();
 })
 
-function renderLogin() {
+
+const MemoryRouterHelper = () => {
     return (
-        <QueryClientProvider client={queryClient}>
-            <Provider store={store}>
-                <LoginUser />
-            </Provider>
-        </QueryClientProvider>
+        <MemoryRouter initialEntries={["/login"]}>
+            <Routes>
+                <Route>
+                    <Route path='/login' element={ <LoginUser /> } />
+                    <Route path='/' element={ <h1>Logged in and redirected to homepage</h1> } />
+                </Route>
+            </Routes>
+        </MemoryRouter>
+    )
+}
+
+function renderLogin(queryClient, store) {
+    return (
+            <QueryClientProvider client={queryClient}>
+                <Provider store={store}>
+                    <MemoryRouterHelper />
+                </Provider>
+            </QueryClientProvider>
     )
 }
 
 describe("Login User", () => {
     it("should render the LoginUser component", () => {
-        render(renderLogin())
 
-        const loginText = screen.getAllByText(/login/i);
+        const queryClient = new QueryClient();
 
-        expect(loginText[0]).toBeInTheDocument();
+        const store = createTestStore({
+            auth: {
+                authStatus: false
+            }
+        })
+
+        render(renderLogin(queryClient, store));
+
+        const loginButton = screen.getByRole('button', {name: /login/i})
+
+        expect(loginButton).toBeInTheDocument();
     })
 
     it("should fill the form and make the user login", async () => {
@@ -48,9 +68,17 @@ describe("Login User", () => {
             }
         })
         
-        const user = userEvent.setup();
+        const queryClient = new QueryClient();
 
-        render(renderLogin());
+        const store = createTestStore({
+            auth: {
+                authStatus: false
+            }
+        })
+
+        render(renderLogin(queryClient, store));
+
+        const user = userEvent.setup();
 
         const usernameInput = screen.getByPlaceholderText(/username/i, {exact: false});
         await user.type(usernameInput,"shameel12");
@@ -63,7 +91,7 @@ describe("Login User", () => {
         const loginButton = screen.getByRole('button', {name: /login/i});
         await user.click(loginButton);
 
-        expect(await screen.findByText(/successfully logged in/i, {exact: false})).toBeInTheDocument();
+        expect(await screen.findByText(/redirected/i, {exact: false})).toBeInTheDocument();
 
     })
 })
