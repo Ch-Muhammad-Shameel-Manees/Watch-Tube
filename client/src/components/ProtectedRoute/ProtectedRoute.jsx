@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getCurrentUser } from "../../services/userService";
-import { login } from "../../store/authSlice";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProtectedRoute = () => {
     const authStatus = useSelector(state => state.auth.authStatus);
