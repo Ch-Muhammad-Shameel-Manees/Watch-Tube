@@ -14,7 +14,7 @@ import { UserPlaylists, PlaylistPage, CreatePlaylist } from './components/Playli
 
 const queryClient = new QueryClient()
 
-const router = createBrowserRouter(
+export const createAppRouter = () => createBrowserRouter(
     createRoutesFromElements(
       <>
         <Route element={<AuthProvider />}>
@@ -38,11 +38,24 @@ const router = createBrowserRouter(
     )
 )
 
-createRoot(document.getElementById('root')).render(
-    <QueryClientProvider client={queryClient}> 
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
-    </QueryClientProvider>
+export const router = createAppRouter()
 
-)
+export function mountApp() {
+    const rootElement = document.getElementById('root')
+
+    if (!rootElement) return null
+
+    createRoot(rootElement).render(
+        <QueryClientProvider client={queryClient}> 
+          <Provider store={store}>
+            <RouterProvider router={router} />
+          </Provider>
+        </QueryClientProvider>
+    )
+
+    return rootElement
+}
+
+if (typeof document !== 'undefined') {
+    mountApp()
+}
