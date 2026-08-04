@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router';
 import { setTheme } from './store/themeSlice.js';
+import Layout from './Layout.jsx';
 
 function App() {
     const dispatch = useDispatch();
@@ -21,7 +22,7 @@ function App() {
 
     return (
         <div className={`${theme === 'dark' ? 'bg-gray-950 text-gray-200' : 'bg-gray-200 text-gray-950'}`}>
-            <Outlet />
+            <Layout />
         </div>
     )
 }

@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCurrentUser } from "../../services/userService";
 import { login } from "../../store/authSlice";
 import Layout from "../../Layout";
+import { Outlet } from "react-router-dom";
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = () => {
     const authStatus = useSelector(state => state.auth.authStatus);
 
     const dispatch = useDispatch();
@@ -24,5 +25,5 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, [authStatus, dispatch]);
 
-    return <Layout>{children}</Layout>;
+    return <Outlet />;
 };
